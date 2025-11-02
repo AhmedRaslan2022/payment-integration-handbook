@@ -7,7 +7,7 @@ It covers **Webhook (Callback URL) Registration**, **Payment Session Creation**,
 
 ---
 
-## Step 1 — Webhook (Callback URL) Registration
+## Webhook (Callback URL) Registration
 
 The webhook endpoint allows the payment gateway to notify you whenever a transaction’s status changes (e.g., success, failure, refund).  
 Your backend must handle these notifications securely and idempotently, updating your internal order state only after verifying authenticity.
@@ -39,7 +39,7 @@ curl --request POST \
 ```
 ---
 
-#  Step 2 — Session Creation Request
+#  Session Creation Request
 
 After webhook setup, your system creates a **payment session** to initialize the transaction.  
 This API call prepares the order details and returns a secure **checkout URL** or **session token**, which redirects the user to the gateway’s payment page.
@@ -69,7 +69,7 @@ Refer to your gateway’s documentation — typical parameters include:
 
 
 
-# Step 3 — Handle Webhooks (Callback URLs)
+#   Handle Webhooks (Callback URLs)
 
 After a payment is initiated, you must handle both **asynchronous webhooks** (server-to-server) and **frontend redirections** (user-facing) to ensure payment confirmation and order-status consistency.
 
@@ -106,7 +106,7 @@ If both match, the webhook is confirmed as authentic and unaltered. This preve
 ---
 
 
-# 🌐 Step 4 — WebView Redirections 
+# 🌐  WebView Redirections 
 
 This section focuses on handling frontend redirections after checkout, implementing backend best practices, managing installment-based capture flows, and adding resilience through a circuit breaker mechanism.
 
@@ -135,7 +135,7 @@ You must configure these redirect URLs in both your **gateway dashboard** and yo
 
 ---
 
-# Step 5 — Handling Refunds
+# Handling Refunds
  
 Refunds are a critical part of the payment lifecycle and must be handled securely, traceably, and consistently with your gateway’s capabilities. Most gateways support two refund methods — API-based refunds (automated) and manual refunds (via their dashboard/admin panel).
 
