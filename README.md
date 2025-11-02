@@ -67,35 +67,9 @@ Refer to your gateway’s documentation — typical parameters include:
 
 ---
 
-## ⚙️ Recommended Flow
-
-Below is the general session-based payment flow that most gateways follow:
-
-1. **User initiates payment**  
-   → You create a payment session via API  
-   → The user is redirected to the gateway’s checkout page.
-
-2. **User completes payment**  
-   → The gateway redirects the user to one of the following URLs:  
-   - `success_url`  
-   - `failure_url`  
-   - `cancel_url`
-
-3. **Webhook fires**  
-   → The gateway sends a **server-to-server confirmation** to your registered webhook endpoint.  
-   → The backend must:
-   - Respond **immediately** with `HTTP 200 OK`  
-   - Validate the webhook signature (HMAC or secret key)  
-   - Update the internal order state (e.g., Paid, Failed)
-
-4. **Reconciliation / Fallback Process**  
-   → A scheduled background job (cron or queue worker) rechecks any orders still marked as “pending.”  
-   → Calls the gateway’s **Payment Details Endpoint** to verify and correct their status if needed.
-
----
 
 
-# Step 3 — Handle Webhooks (Callback URLs) & WebView Redirections
+# Step 3 — Handle Webhooks (Callback URLs)
 
 After a payment is initiated, you must handle both **asynchronous webhooks** (server-to-server) and **frontend redirections** (user-facing) to ensure payment confirmation and order-status consistency.
 
@@ -115,30 +89,8 @@ Webhooks notify your backend in real time about key payment events, such as:
 
 ---
 
-### 🧩 Processing Flow
 
-1. **Respond immediately with HTTP 200 OK**  
-   - This acknowledges receipt and prevents the gateway from retrying.  
-   - Do not perform heavy logic in the initial response — enqueue or background-process it instead.
-
-2. **Validate Authenticity (HMAC / Signature Check)**  
-   - The gateway signs each payload using a shared secret key.  
-   - Your backend must:  
-     1. Regenerate the HMAC from the raw request body.  
-     2. Compare it with the signature header from the gateway.  
-   - If they match, the payload is confirmed authentic and unaltered — protecting you from spoofed or tampered requests.
-
-3. **Extract Core Identifiers**  
-   - `order_id`, `transaction_id`, and `status`.
-
-4. **Update Your Order Record**  
-   - Map gateway statuses to your internal states (e.g., *Paid*, *Failed*, *Refunded*).
-
-5. **Log the Payload for Auditing**  
-   - Store the raw JSON, signature, and timestamp for debugging or reconciliation.
-
-
-# 🌐 Step 4 — WebView Redirections, Best Practices & Payment Reliability
+# 🌐 Step 4 — WebView Redirections 
 
 This section focuses on handling frontend redirections after checkout, implementing backend best practices, managing installment-based capture flows, and adding resilience through a circuit breaker mechanism.
 
@@ -184,6 +136,34 @@ Authorization first, then capture.
 - Use the `payment_id` or `transaction_id` returned from session creation or webhook.  
 - For **partial captures** (e.g., partial shipments or staged billing), specify the `amount` in the API call.  
 - Log every capture attempt with timestamps for traceability.
+---
+
+
+## ⚙️ Recommended Flow
+
+Below is the general session-based payment flow that most gateways follow:
+
+1. **User initiates payment**  
+   → You create a payment session via API  
+   → The user is redirected to the gateway’s checkout page.
+
+2. **User completes payment**  
+   → The gateway redirects the user to one of the following URLs:  
+   - `success_url`  
+   - `failure_url`  
+   - `cancel_url`
+
+3. **Webhook fires**  
+   → The gateway sends a **server-to-server confirmation** to your registered webhook endpoint.  
+   → The backend must:
+   - Respond **immediately** with `HTTP 200 OK`  
+   - Validate the webhook signature (HMAC or secret key)  
+   - Update the internal order state (e.g., Paid, Failed)
+
+4. **Reconciliation / Fallback Process**  
+   → A scheduled background job (cron or queue worker) rechecks any orders still marked as “pending.”  
+   → Calls the gateway’s **Payment Details Endpoint** to verify and correct their status if needed.
+
 ---
 
  ## 🧠 Best Practices
