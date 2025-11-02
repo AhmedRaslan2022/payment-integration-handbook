@@ -166,6 +166,25 @@ Below is the general session-based payment flow that most gateways follow:
 
 ---
 
+## ⚡ Circuit Breaker for Live Systems
+
+What is a Circuit Breaker?
+
+A Circuit Breaker is a fault-tolerance mechanism that prevents your system from repeatedly calling a failing external service (like a payment gateway).
+Once failures exceed a threshold, the "circuit" opens and stops further calls until the service recovers.
+
+How It Works
+
+1. Closed State: All requests flow normally. If failures exceed a threshold (timeouts, 5xx errors), the breaker opens.
+2. Open State: Requests are temporarily blocked for a cooldown period (e.g., 30 seconds).
+3. Half-Open State: The system sends test requests after cooldown — if successful, it closes again; if not, it stays open longer.
+
+Why Use It?
+* Improves stability and user experience during gateway downtime.
+* Enables graceful fallbacks (e.g., show “Service is temporarily unavailable” instead of breaking checkout).
+
+---
+
  ## 🧠 Best Practices
 
 A strong payment integration balances security, reliability, and clarity in user experience.  
