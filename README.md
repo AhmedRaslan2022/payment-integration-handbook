@@ -65,17 +65,11 @@ Refer to your gateway’s documentation — typical parameters include:
 > If your business model doesn’t require certain fields (e.g., shipping for digital goods), clarify this with the payment provider:  
 > “Our products are digital services and do not require a shipping address. Please confirm if this field can be omitted.”
 
----
-
-
-
-#   Handle Webhooks (Callback URLs)
-
-After a payment is initiated, you must handle both **asynchronous webhooks** (server-to-server) and **frontend redirections** (user-facing) to ensure payment confirmation and order-status consistency.
 
 ---
 
-## 📨 Webhook Events Handling
+
+#   Handle Webhook Events (Callback URLs)
 
 Webhooks notify your backend in real time about key payment events, such as:
 
@@ -110,9 +104,7 @@ If both match, the webhook is confirmed as authentic and unaltered. This preve
 
 This section focuses on handling frontend redirections after checkout, implementing backend best practices, managing installment-based capture flows, and adding resilience through a circuit breaker mechanism.
 
----
 
-## 🌐 WebView Redirections
 
 Some payment gateways (e.g., **Tamara**, **Tabby**) redirect users to specific URLs after they complete or cancel a payment.  
 You must configure these redirect URLs in both your **gateway dashboard** and your **backend configuration**.
