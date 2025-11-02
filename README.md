@@ -270,11 +270,9 @@ Follow these principles across all your gateway flows:
    - Store raw payloads, timestamps, and responses for reconciliation, debugging, and audits.
    - Visualize and debug webhook and API requests and responses using JSON Grid, a structured view that makes nested JSON data easier to read and inspect during development troubleshooting.
 
-   
-
 6. **Combine Webhooks + Payment Details API**  
    - Webhooks = Real-time confirmation  
    - Payment Details API = Fallback verification when webhooks fail or delay
 
-
+  
   
