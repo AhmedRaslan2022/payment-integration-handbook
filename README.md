@@ -273,6 +273,87 @@ Follow these principles across all your gateway flows:
 6. **Combine Webhooks + Payment Details API**  
    - Webhooks = Real-time confirmation  
    - Payment Details API = Fallback verification when webhooks fail or delay
+---
 
-  
-  
+  # 🧠 Q&A — Handling Common Payment Integration Scenarios
+
+
+## ❓ Q1: What should I do if the webhook request never reaches my server?
+
+✅ **Answer:**
+
+1. **Check endpoint accessibility**  
+   - Ensure your callback URL is publicly accessible (not behind VPN, local server, or firewall).
+
+2. **Use HTTPS with a valid SSL certificate**  (if needed by the gateway requirements)
+   - Payment gateways reject non-secure or invalid endpoints.
+
+3. **Verify exact URL match**  
+   - Confirm the callback URL matches what’s registered in the gateway dashboard (case-sensitive, trailing slashes matter).
+
+4. **Inspect gateway logs or dashboard**  
+   - Look for delivery attempts, response codes, and timestamps.
+
+5. **Implement fallback reconciliation**  
+   - Periodically call the **Payment Details API** to reconcile any orders still marked as “pending” if webhook delivery fails.
+
+---
+
+## ❓ Q2: The webhook endpoint receives the event, but my system processes it multiple times. How can I prevent that?
+
+✅ **Answer: Implement Idempotency**
+
+1. **Check for duplicate events**  
+   - Before processing, verify if the `event_id` or `transaction_id` already exists in your database.
+
+2. **Store processed events**  
+   - Save the event or transaction ID in a dedicated table with a timestamp.
+
+3. **Return `HTTP 200 OK` for duplicates**  
+   - Always respond with 200, even if the event was already processed.  
+     Gateways retry failed deliveries if a non-200 status is returned.
+
+4. **Example Table: `webhook_events`**
+
+   |  event_id | transaction_id |    processed_at      | 
+   |-----------|----------------| -------------------- |
+   |   12345   |   tx_98765     |  2025-11-02 13:22:44 |
+
+---
+
+## ❓ Q3: How do I verify webhook authenticity (HMAC signature)?
+
+✅ **Answer:**
+
+1. **Retrieve the signature**
+   - Extract the signature from the webhook’s request headers (e.g., `X-Signature` or `X-HMAC`).
+
+2. **Recreate the HMAC hash locally**
+   - Generate your own hash using the same algorithm (e.g., SHA256) and the secret key provided by the gateway.
+
+---
+
+ ❓ Q4: The user completed payment successfully but wasn’t redirected to success_url. What should I do?
+
+✅ Answer:
+
+Always treat webhook events as the primary confirmation.
+
+Even if redirection fails (e.g., user closes browser), your  will still receive the webhook.
+
+Use your frontend to query the backend and display the order’s final status instead of depending solely on redirection.
+
+---
+
+
+❓ Q6: How can I safely handle refund or capture APIs?
+
+✅ Answer:
+
+Always use the payment_id or transaction_id provided by the gateway.
+
+Capture or refund only after webhook confirmation of success or authorization.
+
+For partial captures or refunds, include the specific amount and record the action for audit purposes.
+
+Maintain a capture log table containing payment_id, amount, timestamp, and user_id.
