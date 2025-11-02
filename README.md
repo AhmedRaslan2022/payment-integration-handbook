@@ -333,7 +333,7 @@ Follow these principles across all your gateway flows:
 
 ---
 
- ❓ Q4: The user completed payment successfully but wasn’t redirected to success_url. What should I do?
+ ## ❓ Q4: The user completed payment successfully but wasn’t redirected to success_url. What should I do?
 
 ✅ Answer:
 
@@ -346,7 +346,7 @@ Use your frontend to query the backend and display the order’s final status in
 ---
 
 
-❓ Q6: How can I safely handle refund or capture APIs?
+## ❓ Q6: How can I safely handle refund or capture APIs?
 
 ✅ Answer:
 
