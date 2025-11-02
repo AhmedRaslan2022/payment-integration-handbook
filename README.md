@@ -135,7 +135,7 @@ You must configure these redirect URLs in both your **gateway dashboard** and yo
 
 ---
 
-# Handling Refunds
+## Handling Refunds
  
 Refunds are a critical part of the payment lifecycle and must be handled securely, traceably, and consistently with your gateway’s capabilities. Most gateways support two refund methods — API-based refunds (automated) and manual refunds (via their dashboard/admin panel).
 
@@ -155,12 +155,15 @@ When your system needs to trigger a refund (e.g., user cancels order or returns 
     
 2. Call the Refund API
     * Send a POST request to the gateway’s refund endpoint, typically including:
+    
         * payment_id or transaction_id
         * refund_amount
         * reason or comment (optional)
         * reference_id (for your own internal tracking)
   
  Example
+
+  ```Js
  {
     "payment_id": "abc123",
     "amount": 150.00,
@@ -169,18 +172,25 @@ When your system needs to trigger a refund (e.g., user cancels order or returns 
     "reference": "ORD-1009"
   }
 
+```
 
-  Handle API Response
-    * If the refund is accepted, record its refund_id, status (pending, processed, failed), and timestamp in your database.
-    * Some gateways may perform refunds asynchronously, meaning success does not guarantee funds have been transferred — rely on the webhook for final confirmation.
-    
+
+ Handle API Response
+
+If the refund is accepted, record its refund_id, status (pending, processed, failed), and timestamp in your database.
+
+Some gateways may perform refunds asynchronously, meaning success does not guarantee funds have been transferred — rely on the webhook for final confirmation.
+
   Wait for Webhook Confirmation
-    * Once the refund is completed, the gateway sends a refund_processed or refund_succeeded event to your webhook endpoint.
-    * You should:
+
+   * Once the refund is completed, the gateway sends a refund_processed or refund_succeeded event to your webhook endpoint.
+        You should:
         * Validate the webhook signature (HMAC check).
         * Update the order’s refund status in your system.
         * Record the amount and timestamp for auditing.
         * Optionally notify the user via email or push notification.
+
+
 
 
 ## 💳 Installment Gateways — Capturing the Payment
