@@ -87,6 +87,19 @@ Webhooks notify your backend in real time about key payment events, such as:
 | `payment_captured` | Funds successfully captured |
 | `refund_processed` | Refund issued to the customer |
 
+
+On Receiving an Event:
+
+1. Respond immediately with HTTP 200 OK — This acknowledges receipt of the webhook to prevent retries. Handle processing asynchronously in the background to keep your endpoint fast and reliable.
+
+2. Validate authenticity (HMAC/Signature Check) — The gateway signs each webhook payload using a shared secret key. Your server must re-generate this HMAC (Hash-based Message Authentication Code) from the payload and compare it to the received signature. If both match, the webhook is confirmed as authentic and unaltered. This prevents spoofed or tampered requests.
+
+3. Extract key identifiers — order_id, transaction_id, status
+
+4. Update your database or order record.
+
+5. Log the raw payload and timestamp for auditing and debugging
+
 ---
 
 
